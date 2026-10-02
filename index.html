@@ -1,12 +1,530 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>Basel's Site</title>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BaseCore Type</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        mono: ['"JetBrains Mono"', 'monospace'],
+                        sans: ['"Inter"', 'sans-serif'],
+                    },
+                    colors: {
+                        base: '#09090b', // Deep Dark
+                        surface: '#18181b', // Slightly lighter
+                        primary: '#06b6d4', // Cyan
+                        secondary: '#a855f7', // Purple
+                        error: '#ef4444', // Red
+                        textMuted: '#52525b', // Dimmed text
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
-      body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background: #111; color: #fff; }
+        body {
+            background-color: theme('colors.base');
+            color: theme('colors.gray.300');
+            overflow-x: hidden;
+        }
+        
+        /* Smooth typing container */
+        #typing-area {
+            position: relative;
+            mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
+        }
+
+        /* The animated smooth caret */
+        #caret {
+            position: absolute;
+            width: 3px;
+            height: 1.8rem;
+            background-color: theme('colors.primary');
+            border-radius: 4px;
+            box-shadow: 0 0 10px theme('colors.primary');
+            transition: transform 0.1s cubic-bezier(0.2, 0, 0, 1);
+            z-index: 10;
+            top: 0;
+            left: 0;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        .caret-blink {
+            animation: blink 1s infinite;
+        }
+
+        /* Letter styles & transitions */
+        .letter {
+            transition: color 0.1s ease, text-shadow 0.1s ease;
+            position: relative;
+        }
+        
+        .letter.correct {
+            color: #f8fafc;
+        }
+        
+        .letter.incorrect {
+            color: theme('colors.error');
+            text-shadow: 0 0 8px rgba(239, 68, 68, 0.6);
+        }
+
+        .letter.extra {
+            color: theme('colors.error');
+            text-shadow: 0 0 8px rgba(239, 68, 68, 0.6);
+            opacity: 0.8;
+        }
+
+        /* Word Container */
+        .word {
+            display: inline-flex;
+            margin: 0 0.4rem 0.6rem 0;
+            border-bottom: 2px solid transparent;
+        }
+        
+        .word.error-underline {
+            border-bottom: 2px solid theme('colors.error');
+        }
+
+        /* Glassmorphism Results Modal */
+        .glass-modal {
+            background: rgba(24, 24, 27, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255,255,255,0.05);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Button Hover Effects */
+        .time-btn {
+            transition: all 0.2s ease;
+        }
+        .time-btn.active {
+            color: theme('colors.primary');
+            text-shadow: 0 0 10px rgba(6, 182, 212, 0.5);
+        }
+        .time-btn:hover:not(.active) {
+            color: white;
+        }
+        
+        /* Custom Scrollbar hide */
+        ::-webkit-scrollbar { display: none; }
     </style>
-  </head>
-  <body>
-    <h1>Hello, World! Basel's site is live.</h1>
-  </body>
+</head>
+<body class="min-h-screen flex flex-col font-sans selection:bg-primary selection:text-base">
+
+    <!-- Hidden input to force mobile keyboard and capture standard typing -->
+    <input type="text" id="hidden-input" class="absolute opacity-0 -z-10" autocomplete="off" autocapitalize="off" spellcheck="false">
+
+    <!-- Header -->
+    <header class="w-full max-w-5xl mx-auto p-6 flex justify-between items-center mt-4">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-[0_0_20px_rgba(168,85,247,0.4)]">
+                <svg class="w-6 h-6 text-base" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+            </div>
+            <h1 class="text-2xl font-bold tracking-tight text-white">BaseCore<span class="text-primary font-mono text-xl ml-1">Type</span></h1>
+        </div>
+        
+        <div class="flex gap-4 items-center bg-surface px-4 py-2 rounded-full border border-gray-800">
+            <button class="time-btn text-textMuted font-mono text-sm hover:text-white" data-time="15">15s</button>
+            <button class="time-btn text-textMuted font-mono text-sm hover:text-white active" data-time="30">30s</button>
+            <button class="time-btn text-textMuted font-mono text-sm hover:text-white" data-time="60">60s</button>
+            <div class="w-px h-4 bg-gray-700 mx-2"></div>
+            <a href="https://github.com" target="_blank" class="text-textMuted hover:text-white transition-colors">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"></path></svg>
+            </a>
+        </div>
+    </header>
+
+    <main class="flex-grow flex flex-col items-center justify-center w-full max-w-5xl mx-auto px-6 mb-20">
+        
+        <!-- Timer -->
+        <div class="w-full mb-8 flex justify-start">
+            <div id="timer-display" class="text-primary font-mono text-4xl font-bold tracking-wider opacity-0 transition-opacity duration-300">
+                30
+            </div>
+        </div>
+
+        <!-- Typing Container -->
+        <div id="typing-area" class="w-full text-3xl font-mono text-textMuted leading-loose h-[130px] overflow-hidden cursor-text relative">
+            <div id="caret" class="caret-blink"></div>
+            <div id="words-container" class="flex flex-wrap content-start transition-transform duration-300 ease-out">
+                <!-- Words will be injected here via JS -->
+            </div>
+        </div>
+
+        <!-- Restart Button -->
+        <div class="mt-12">
+            <button id="restart-btn" class="p-3 rounded-xl bg-surface border border-gray-800 text-gray-400 hover:text-white hover:border-primary hover:shadow-[0_0_15px_rgba(6,182,212,0.3)] transition-all flex items-center justify-center group" title="Restart Test (Tab)">
+                <svg class="w-6 h-6 group-hover:rotate-180 transition-transform duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+            </button>
+        </div>
+    </main>
+
+    <div id="results-modal" class="fixed inset-0 z-50 flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-500">
+        <div class="glass-modal rounded-3xl p-10 max-w-2xl w-full mx-4 transform scale-95 transition-transform duration-500" id="results-card">
+            <h2 class="text-center text-xl text-gray-400 font-semibold mb-8 uppercase tracking-widest">Test Completed</h2>
+            
+            <div class="grid grid-cols-2 gap-8 mb-10">
+                <!-- WPM -->
+                <div class="text-center flex flex-col items-center p-6 rounded-2xl bg-white/5 border border-white/10 relative overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-br from-primary/20 to-transparent opacity-50"></div>
+                    <span class="text-sm text-gray-400 font-mono mb-2 relative z-10">WPM</span>
+                    <span id="result-wpm" class="text-6xl font-bold text-primary relative z-10">0</span>
+                </div>
+                
+                <!-- Accuracy -->
+                <div class="text-center flex flex-col items-center p-6 rounded-2xl bg-white/5 border border-white/10 relative overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-br from-secondary/20 to-transparent opacity-50"></div>
+                    <span class="text-sm text-gray-400 font-mono mb-2 relative z-10">Accuracy</span>
+                    <span id="result-acc" class="text-6xl font-bold text-secondary relative z-10">0%</span>
+                </div>
+            </div>
+
+            <div class="flex justify-between items-center text-sm font-mono text-gray-500 px-4">
+                <div>Time: <span id="result-time" class="text-gray-300">30s</span></div>
+                <div>Keystrokes: <span id="result-keys" class="text-gray-300">0</span></div>
+            </div>
+
+            <div class="mt-10 flex justify-center">
+                <button id="modal-restart-btn" class="px-8 py-3 rounded-full bg-white text-black font-bold flex items-center gap-2 hover:bg-gray-200 transition-colors shadow-[0_0_20px_rgba(255,255,255,0.2)]">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Next Test
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. Variables & State ---
+        const dictionary = [
+            'about', 'above', 'add', 'after', 'again', 'air', 'all', 'almost', 'along', 'also', 'always', 'america', 'an', 'and', 'animal', 'another', 'answer', 'any', 'are', 'around', 'as', 'ask', 'at', 'away', 'back', 'be', 'because', 'been', 'before', 'began', 'begin', 'being', 'below', 'between', 'big', 'book', 'both', 'boy', 'but', 'by', 'call', 'came', 'can', 'car', 'carry', 'change', 'children', 'city', 'close', 'come', 'could', 'country', 'cut', 'day', 'did', 'different', 'do', 'does', 'down', 'each', 'earth', 'eat', 'end', 'enough', 'even', 'every', 'example', 'eye', 'face', 'family', 'far', 'father', 'feet', 'few', 'find', 'first', 'follow', 'food', 'for', 'form', 'found', 'four', 'from', 'get', 'girl', 'give', 'go', 'good', 'got', 'great', 'group', 'grow', 'had', 'hand', 'hard', 'has', 'have', 'he', 'head', 'hear', 'help', 'her', 'here', 'high', 'him', 'his', 'home', 'house', 'how', 'idea', 'if', 'important', 'in', 'into', 'is', 'it', 'its', 'just', 'keep', 'kind', 'know', 'land', 'large', 'last', 'later', 'learn', 'leave', 'left', 'let', 'letter', 'life', 'light', 'like', 'line', 'list', 'little', 'live', 'long', 'look', 'made', 'make', 'man', 'many', 'may', 'me', 'mean', 'men', 'might', 'mile', 'miss', 'more', 'most', 'mother', 'mountain', 'move', 'much', 'must', 'my', 'name', 'near', 'need', 'never', 'new', 'next', 'night', 'no', 'not', 'now', 'number', 'of', 'off', 'often', 'oil', 'old', 'on', 'once', 'one', 'only', 'open', 'or', 'other', 'our', 'out', 'over', 'own', 'page', 'paper', 'part', 'people', 'picture', 'place', 'plant', 'play', 'point', 'put', 'read', 'real', 'right', 'river', 'run', 'said', 'same', 'saw', 'say', 'school', 'sea', 'second', 'see', 'seem', 'sentence', 'set', 'she', 'should', 'show', 'side', 'some', 'something', 'sometimes', 'song', 'soon', 'sound', 'spell', 'start', 'state', 'still', 'stop', 'story', 'study', 'such', 'take', 'talk', 'tell', 'than', 'that', 'the', 'their', 'them', 'then', 'there', 'these', 'they', 'thing', 'think', 'this', 'those', 'thought', 'three', 'through', 'time', 'to', 'together', 'too', 'took', 'tree', 'try', 'turn', 'two', 'under', 'until', 'up', 'us', 'use', 'very', 'walk', 'want', 'was', 'watch', 'water', 'way', 'we', 'well', 'went', 'were', 'what', 'when', 'where', 'which', 'while', 'white', 'who', 'why', 'will', 'with', 'without', 'word', 'work', 'world', 'would', 'write', 'year', 'you', 'young', 'your'
+        ];
+
+        let timeSelected = 30;
+        let timeLeft = timeSelected;
+        let timerInterval = null;
+        let isTesting = false;
+        let isEnded = false;
+
+        let words = [];
+        let currentWordIndex = 0;
+        let currentLetterIndex = 0;
+        
+        let correctKeystrokes = 0;
+        let totalKeystrokes = 0;
+
+        // --- 2. DOM Elements ---
+        const wordsContainer = document.getElementById('words-container');
+        const caret = document.getElementById('caret');
+        const timerDisplay = document.getElementById('timer-display');
+        const hiddenInput = document.getElementById('hidden-input');
+        const typingArea = document.getElementById('typing-area');
+        
+        const timeBtns = document.querySelectorAll('.time-btn');
+        const restartBtn = document.getElementById('restart-btn');
+        const modalRestartBtn = document.getElementById('modal-restart-btn');
+        
+        const resultsModal = document.getElementById('results-modal');
+        const resultsCard = document.getElementById('results-card');
+        const resultWPM = document.getElementById('result-wpm');
+        const resultAcc = document.getElementById('result-acc');
+        const resultTime = document.getElementById('result-time');
+        const resultKeys = document.getElementById('result-keys');
+
+        // --- STREAMING_CHUNK:Core Functions ---
+
+        // Generate Random Words Array
+        function getRandomWords(count) {
+            const arr = [];
+            for (let i = 0; i < count; i++) {
+                arr.push(dictionary[Math.floor(Math.random() * dictionary.length)]);
+            }
+            return arr;
+        }
+
+        // Render Words to DOM
+        function renderWords() {
+            wordsContainer.innerHTML = '';
+            words.forEach((word, wIdx) => {
+                const wordEl = document.createElement('div');
+                wordEl.classList.add('word');
+                
+                word.split('').forEach((char, cIdx) => {
+                    const charEl = document.createElement('span');
+                    charEl.classList.add('letter');
+                    charEl.innerText = char;
+                    wordEl.appendChild(charEl);
+                });
+                wordsContainer.appendChild(wordEl);
+            });
+            
+            // Reset transform for new test
+            wordsContainer.style.transform = `translateY(0px)`;
+        }
+
+        // Move the smooth caret to the current letter
+        function updateCaret() {
+            const wordEl = wordsContainer.children[currentWordIndex];
+            if (!wordEl) return;
+            
+            const letters = wordEl.querySelectorAll('.letter');
+            let targetEl;
+            
+            if (currentLetterIndex < letters.length) {
+                targetEl = letters[currentLetterIndex];
+            } else {
+                targetEl = letters[letters.length - 1]; // End of word
+            }
+
+            const targetRect = targetEl.getBoundingClientRect();
+            const containerRect = wordsContainer.getBoundingClientRect();
+            const typingAreaRect = typingArea.getBoundingClientRect();
+
+            let leftPos = targetRect.left - typingAreaRect.left;
+            let topPos = targetRect.top - typingAreaRect.top;
+
+            // If we are past the last letter, put caret to the right of it
+            if (currentLetterIndex >= letters.length) {
+                leftPos += targetRect.width;
+            }
+
+            caret.style.transform = `translate(${leftPos}px, ${topPos}px)`;
+
+            // Handle Scroll lines
+            // If caret moves down a line, slide the container up
+            const lineThreshold = 40; // Approx height of one line
+            if (topPos > lineThreshold * 1.5) {
+                const currentTransform = getComputedStyle(wordsContainer).transform;
+                let currentY = 0;
+                if(currentTransform !== 'none') {
+                     currentY = parseInt(currentTransform.split(',')[5]);
+                }
+                wordsContainer.style.transform = `translateY(${currentY - 48}px)`; // Move up by line height
+            }
+        }
+
+        // Reset and Start Game
+        function initGame() {
+            clearInterval(timerInterval);
+            isTesting = false;
+            isEnded = false;
+            timeLeft = timeSelected;
+            
+            currentWordIndex = 0;
+            currentLetterIndex = 0;
+            correctKeystrokes = 0;
+            totalKeystrokes = 0;
+
+            words = getRandomWords(100); // 100 words per test is usually enough
+            renderWords();
+            
+            timerDisplay.innerText = timeLeft;
+            timerDisplay.style.opacity = '0'; // Hide until typing starts
+            caret.classList.add('caret-blink');
+            
+            hideResults();
+            hiddenInput.value = '';
+            hiddenInput.focus();
+            
+            // Slight delay to allow DOM render before placing caret
+            setTimeout(updateCaret, 10);
+        }
+
+        function startTimer() {
+            if (isTesting) return;
+            isTesting = true;
+            timerDisplay.style.opacity = '1';
+            caret.classList.remove('caret-blink');
+            
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                timerDisplay.innerText = timeLeft;
+                if (timeLeft <= 0) {
+                    endGame();
+                }
+            }, 1000);
+        }
+
+        function endGame() {
+            clearInterval(timerInterval);
+            isTesting = false;
+            isEnded = true;
+            hiddenInput.blur();
+            caret.style.opacity = '0';
+            
+            calculateResults();
+            showResults();
+        }
+
+        function calculateResults() {
+            // WPM = (Total characters / 5) / time in minutes
+            const timeInMins = timeSelected / 60;
+            const wpm = Math.round((correctKeystrokes / 5) / timeInMins);
+            const accuracy = totalKeystrokes > 0 ? Math.round((correctKeystrokes / totalKeystrokes) * 100) : 0;
+            
+            resultWPM.innerText = isNaN(wpm) ? 0 : wpm;
+            resultAcc.innerText = accuracy + '%';
+            resultTime.innerText = timeSelected + 's';
+            resultKeys.innerText = `${correctKeystrokes}/${totalKeystrokes - correctKeystrokes}`; // Correct/Errors
+        }
+
+        function showResults() {
+            resultsModal.classList.remove('pointer-events-none', 'opacity-0');
+            resultsCard.classList.remove('scale-95');
+            resultsCard.classList.add('scale-100');
+        }
+
+        function hideResults() {
+            resultsModal.classList.add('pointer-events-none', 'opacity-0');
+            resultsCard.classList.add('scale-95');
+            resultsCard.classList.remove('scale-100');
+            caret.style.opacity = '1';
+        }
+
+        // --- STREAMING_CHUNK:Event Listeners & Input Handling ---
+
+        // Focus management
+        typingArea.addEventListener('click', () => {
+            if(!isEnded) hiddenInput.focus();
+        });
+
+        // Time buttons
+        timeBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                timeBtns.forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                timeSelected = parseInt(e.target.dataset.time);
+                initGame();
+                hiddenInput.focus();
+            });
+        });
+
+        // Restarts
+        restartBtn.addEventListener('click', initGame);
+        modalRestartBtn.addEventListener('click', initGame);
+
+        // Global Tab to restart
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Tab') {
+                e.preventDefault();
+                initGame();
+            }
+        });
+
+        // Main typing logic
+        hiddenInput.addEventListener('keydown', (e) => {
+            if (isEnded) return;
+            
+            // Allow start on valid key
+            if (!isTesting && e.key.length === 1) {
+                startTimer();
+            }
+
+            const currentWordEl = wordsContainer.children[currentWordIndex];
+            const letters = currentWordEl.querySelectorAll('.letter');
+
+            if (e.key === 'Backspace') {
+                // Handle Backspace
+                if (currentLetterIndex > 0) {
+                    currentLetterIndex--;
+                    const charEl = letters[currentLetterIndex];
+                    
+                    // If it was an extra character, remove it
+                    if (charEl.classList.contains('extra')) {
+                        charEl.remove();
+                    } else {
+                        // Reset classes
+                        charEl.classList.remove('correct', 'incorrect');
+                    }
+                } else if (currentLetterIndex === 0 && currentWordIndex > 0) {
+                    // Go back to previous word
+                    currentWordIndex--;
+                    const prevWordEl = wordsContainer.children[currentWordIndex];
+                    const prevLetters = prevWordEl.querySelectorAll('.letter');
+                    // Find the last typed letter or extra letter index
+                    currentLetterIndex = prevLetters.length;
+                    
+                    // Remove error underline if we go back to fix it
+                    prevWordEl.classList.remove('error-underline');
+                }
+                updateCaret();
+                return;
+            }
+
+            if (e.key === ' ') {
+                // Space pressed (Next word)
+                e.preventDefault(); // Prevent page scroll
+                
+                // If we didn't type anything in this word, ignore
+                if (currentLetterIndex === 0) return;
+                
+                // Check if current word has untyped letters, mark them as error visually by underlining word
+                if (currentLetterIndex < letters.length) {
+                    currentWordEl.classList.add('error-underline');
+                }
+
+                currentWordIndex++;
+                currentLetterIndex = 0;
+                
+                // Prevent out of bounds
+                if (currentWordIndex >= words.length) {
+                    endGame();
+                    return;
+                }
+                
+                updateCaret();
+                return;
+            }
+
+            // Ignore modifier keys
+            if (e.key.length > 1) return;
+
+            // Handle letter input
+            totalKeystrokes++;
+            
+            if (currentLetterIndex < letters.length) {
+                // Typing within normal word length
+                const expectedChar = letters[currentLetterIndex].innerText;
+                const typedChar = e.key;
+                const charEl = letters[currentLetterIndex];
+
+                if (typedChar === expectedChar) {
+                    charEl.classList.add('correct');
+                    correctKeystrokes++;
+                } else {
+                    charEl.classList.add('incorrect');
+                }
+                currentLetterIndex++;
+            } else {
+                // Typing extra letters
+                const extraCharEl = document.createElement('span');
+                extraCharEl.classList.add('letter', 'extra');
+                extraCharEl.innerText = e.key;
+                currentWordEl.appendChild(extraCharEl);
+                currentLetterIndex++;
+            }
+            
+            updateCaret();
+        });
+
+        // Initial setup
+        window.onload = initGame;
+        
+        // Window resize requires caret repositioning
+        window.addEventListener('resize', updateCaret);
+
+    </script>
+</body>
 </html>
