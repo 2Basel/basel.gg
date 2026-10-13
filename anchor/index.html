@@ -5,12 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="dark">
 <meta name="theme-color" content="#15110E">
-<title>التمن الأولاني | basel.gg</title>
-<meta name="description" content="٦ أسئلة ورقم عشوائي واحد. هل رقم ملوش أي علاقة يقدر يغيّر تخمينك؟">
+<title>الرقم الأولاني | basel.gg</title>
+<meta name="description" content="٣ ثواني ورقم عشوائي واحد. هل يقدر رقم يغيّر اللي شافته عينك؟">
 <!-- Link preview when shared on WhatsApp / social apps -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="التمن الأولاني — basel.gg">
-<meta property="og:description" content="إنت عارف إن الرقم عشوائي. وبرضه هيشدّك. تقدر تقاوم؟">
+<meta property="og:title" content="الرقم الأولاني — basel.gg">
+<meta property="og:description" content="عينك شافت. والرقم العشوائي هيغيّر اللي شافته. تقدر تقاوم؟">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%2315110E'/%3E%3Cpath d='M18 42 C10 18 50 8 55 30 C59 48 30 58 15 46 C7 38 20 19 42 17' fill='none' stroke='%23FF4A1C' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -55,7 +55,7 @@
 
   h1, h2, h3, .display { font-family: var(--display); font-weight: 400; line-height: 1.15; }
   h1 { font-size: clamp(3.2rem, 15vw, 5.6rem); margin: 18px 0 14px; }
-  h2 { font-size: clamp(1.9rem, 8.5vw, 2.7rem); margin: 14px 0 10px; }
+  h2 { font-size: clamp(1.9rem, 8.5vw, 2.7rem); margin: 12px 0 6px; }
   h3 { font-size: 1.7rem; margin: 40px 0 8px; }
   h3 small { font-family: var(--body); font-size: .8rem; color: var(--paper-dim); margin-inline-start: 8px; }
   em { font-style: normal; color: var(--red); }
@@ -75,7 +75,6 @@
     transition: transform .2s, background .2s, color .2s;
   }
   .stamp:hover, .stamp:focus-visible { transform: rotate(0) scale(1.04); background: var(--lime); color: var(--ink); outline: none; }
-  .stamp:disabled { opacity: .35; pointer-events: none; }
 
   .ghost {
     font-family: var(--display); font-size: 1.4rem; color: var(--paper);
@@ -88,27 +87,54 @@
   .challenge-banner { border: 2px dashed var(--red); padding: 10px 16px 12px; margin-top: 18px; transform: rotate(.6deg); }
   .challenge-banner b { color: var(--red); }
 
-  /* ---------- Question screen ---------- */
+  /* ---------- Intro preview: a tiny plate that never stays still ---------- */
+  .teaser { width: 132px; height: 132px; margin: 4px 0 22px; }
+  .teaser .it { animation: blink 3s infinite; }
+  @keyframes blink { 0%, 55% { opacity: 1; } 70%, 100% { opacity: 0; } }
+
+  /* ---------- Game screen ---------- */
   .bar { display: flex; justify-content: space-between; align-items: baseline; }
   #dots { display: flex; gap: 6px; margin-top: 10px; }
-  #dots span { width: 30px; height: 3px; background: var(--line); transition: background .3s; }
+  #dots span { width: 34px; height: 3px; background: var(--line); transition: background .3s; }
   #dots span.done { background: var(--paper); }
 
-  #qText { margin-top: 26px; min-height: 2.4em; }
-  .anchor-box { margin: 18px 0 8px; }
+  .scene-wrap { position: relative; width: min(100%, 54vh); aspect-ratio: 1 / 1; margin: 10px auto 0; }
+  .scene { width: 100%; height: 100%; display: block; transition: opacity .2s, filter .2s; }
+  .scene-wrap.covered .scene { opacity: 0; filter: blur(10px); }
+  .cover {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--display); font-size: clamp(3rem, 16vw, 6rem); color: var(--paper-dim);
+    border: 2px dashed var(--line);
+    opacity: 0; pointer-events: none; transition: opacity .2s;
+  }
+  .scene-wrap.covered .cover { opacity: 1; }
+  .timer { position: absolute; top: -9px; right: 0; height: 4px; width: 100%; background: var(--red); }
+  .timer.run { transition: width 3s linear; }
+  .counter {
+    position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%);
+    font-family: var(--display); font-size: 2.6rem; line-height: 1.2;
+    background: var(--ink); color: var(--paper); padding: 0 .45em;
+    font-variant-numeric: tabular-nums;
+    opacity: 0; transition: opacity .2s, color .3s;
+  }
+  .scene-wrap.counting-on .counter { opacity: 1; }
+  .counter.done { color: var(--lime); }
+  .scene.counting .it { opacity: .13; }
+  .scene.counting .it.c { opacity: 1; }
+
+  .anchor-box { margin: 26px 0 0; }
   .anchor-label { font-size: .85rem; color: var(--paper-dim); }
   #anchorNum {
     font-family: var(--display); color: var(--red);
-    font-size: clamp(4.2rem, 22vw, 7.5rem); line-height: 1.05;
+    font-size: clamp(4.4rem, 24vw, 8rem); line-height: 1.05;
     font-variant-numeric: tabular-nums; display: inline-block;
   }
   #anchorNum.land { animation: land .35s cubic-bezier(.2,1.6,.4,1); }
   @keyframes land { 50% { transform: scale(1.12) rotate(-2deg); } }
-  #anchorUnit { color: var(--paper-dim); margin-inline-start: 8px; }
 
-  .phase { margin-top: auto; padding-top: 20px; }
-  .phase[hidden] { display: none; }
-  .ask { margin-bottom: 12px; }
+  .phase { margin-top: auto; padding-top: 18px; }
+  .ask { display: block; margin-bottom: 12px; }
   .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
   .choice {
     font-family: var(--display); font-size: 1.8rem; color: var(--paper);
@@ -121,21 +147,24 @@
   .choice:active, .choice:focus-visible { background: var(--paper); color: var(--ink); outline: none; }
   .choice:disabled { opacity: .35; pointer-events: none; }
 
-  .guess-row { display: flex; align-items: baseline; gap: 10px; margin: 4px 0 18px; }
   .field {
-    flex: 1; min-width: 0; background: transparent; color: var(--paper);
+    display: block; width: 100%; background: transparent; color: var(--paper);
     border: none; border-bottom: 2px solid var(--paper-dim); border-radius: 0;
-    font-family: var(--display); font-size: 2.6rem; padding: 2px 0; text-align: right;
+    font-family: var(--display); font-size: 2.8rem; padding: 2px 0; margin-bottom: 6px; text-align: right;
   }
   .field:focus { outline: none; border-bottom-color: var(--lime); }
   .field.bad { border-bottom-color: var(--red); animation: shake .4s; }
   @keyframes shake { 20%{transform:translateX(-9px)} 40%{transform:translateX(8px)} 60%{transform:translateX(-5px)} 80%{transform:translateX(3px)} }
-  .guess-unit { color: var(--paper-dim); white-space: nowrap; }
-  .msg { color: var(--red); font-size: .9rem; min-height: 1.5em; }
+  .msg { color: var(--red); font-size: .9rem; min-height: 1.6em; margin-bottom: 8px; }
 
-  /* ---------- Reveal ---------- */
+  .result { font-size: 1.15rem; min-height: 1.9em; margin-bottom: 14px; }
+  .result .g { color: var(--paper); font-weight: 700; }
+  .result .t { color: var(--lime); font-weight: 700; }
+  .result .d { color: var(--paper-dim); }
+
+  /* ---------- Final reveal ---------- */
   .big-stat { font-family: var(--display); font-size: clamp(4rem, 22vw, 7rem); line-height: 1; color: var(--red); margin-top: 18px; font-variant-numeric: tabular-nums; }
-  .circled { position: relative; display: inline-block; }
+  .circled { position: relative; display: inline-block; align-self: flex-start; }
   .pen { position: absolute; inset: -22px -30px -18px -30px; width: calc(100% + 60px); height: calc(100% + 40px); overflow: visible; pointer-events: none; }
   .pen path, .strike path { stroke-dasharray: 1; stroke-dashoffset: 1; }
   .play .pen path { animation: draw 1s 1.2s cubic-bezier(.6,.1,.3,1) forwards; }
@@ -152,8 +181,8 @@
   .strip-label { font-family: var(--display); font-size: 1.25rem; }
   .track { position: relative; height: 34px; }
   .track::before { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: var(--line); }
-  .mk, .seg { position: absolute; top: 50%; transform: translate(-50%, -50%); }
-  .seg { transform: translateY(-50%); height: 3px; background: var(--red); width: 0; transition: left 1.2s cubic-bezier(.2,.7,.2,1), width 1.2s cubic-bezier(.2,.7,.2,1); }
+  .mk { position: absolute; top: 50%; transform: translate(-50%, -50%); }
+  .seg { position: absolute; top: 50%; transform: translateY(-50%); height: 3px; width: 0; background: var(--red); transition: left 1.2s cubic-bezier(.2,.7,.2,1), width 1.2s cubic-bezier(.2,.7,.2,1); }
   .seg.away { background: var(--paper-dim); }
   .mk.anchor { width: 3px; height: 26px; background: var(--red); }
   .mk.truth { width: 12px; height: 12px; background: var(--lime); transform: translate(-50%, -50%) rotate(45deg); }
@@ -174,6 +203,9 @@
   .hl { background-image: linear-gradient(transparent 58%, rgba(200,240,49,.38) 58%); background-repeat: no-repeat; background-position: right; background-size: 0% 100%; }
   .twist.seen .hl { animation: mark .8s 1.5s forwards; }
   @keyframes mark { to { background-size: 100% 100%; } }
+
+  .confess { margin-top: 30px; border-inline-start: 3px solid var(--red); padding-inline-start: 14px; }
+  .confess .display { color: var(--red); font-size: 1.4rem; }
 
   .later { opacity: 0; transform: translateY(16px); transition: opacity .7s, transform .7s; }
   .later.seen { opacity: 1; transform: none; }
@@ -200,7 +232,8 @@
   .num-label { font-size: .85rem; color: var(--paper-dim); }
 
   .notebook { margin: 30px 0 22px; font-size: .92rem; color: var(--paper-dim); border-top: 1px dashed var(--line); padding-top: 14px; }
-  .next { font-family: var(--display); font-size: 1.4rem; }
+  .end-row { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; justify-content: space-between; }
+  .next { font-family: var(--display); font-size: 1.35rem; }
 
   footer { margin-top: 48px; font-size: .8rem; color: var(--paper-dim); display: flex; justify-content: space-between; }
   footer .brand { font-family: var(--display); font-size: 1.2rem; color: var(--paper); text-decoration: none; }
@@ -208,6 +241,7 @@
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation-duration: .01ms !important; animation-delay: 0s !important; transition: none !important; }
     .later, .truth-line { opacity: 1; transform: none; }
+    .teaser .it { animation: none; }
   }
 </style>
 </head>
@@ -216,47 +250,62 @@
 
   <!-- ===== Intro ===== -->
   <section class="screen on" id="intro">
-    <span class="tag">تجربة ٢ — التمن الأولاني</span>
+    <span class="tag">تجربة ٢ — الرقم الأولاني</span>
     <div class="challenge-banner" id="challengeBanner" hidden></div>
-    <h1>٦ أسئلة.<br>خمّن <em>وبس</em>.</h1>
-    <p>مش مطلوب منك تعرف الإجابات. قبل كل سؤال هيطلعلك <b>رقم عشوائي</b>. قول الإجابة أكتر منه ولا أقل، وبعدين اكتب تخمينك.</p>
-    <p class="dim">الرقم عشوائي فعلاً. خليه في بالك.</p>
+    <h1>٣ ثواني.<br>بعينك <em>بس</em>.</h1>
+    <svg class="teaser" id="teaser" viewBox="0 0 400 400" aria-hidden="true"></svg>
+    <p>هتشوف ٤ صور مليانة حاجات: لب، بلي، ناس، نجوم. كل صورة هتظهر <b>٣ ثواني</b> وتختفي. مش هتلحق تعد، وده المقصود. خمّن بإحساسك.</p>
+    <p class="dim">وقبل كل تخمين هيطلعلك رقم عشوائي. خليه في بالك.</p>
     <p style="margin-bottom:30px"></p>
     <button class="stamp" id="go">يلا</button>
     <footer><a class="brand" href="../">basel.gg</a><span>جرّب الأول، افهم بعدين</span></footer>
   </section>
 
-  <!-- ===== Questions ===== -->
-  <section class="screen" id="quiz">
-    <div class="bar"><span class="tag" id="qLabel"></span></div>
+  <!-- ===== Game ===== -->
+  <section class="screen" id="game">
+    <div class="bar"><span class="tag" id="rLabel"></span></div>
     <div id="dots"></div>
-    <h2 id="qText"></h2>
+    <h2 id="rTitle"></h2>
 
-    <div class="anchor-box">
-      <div class="anchor-label">رقم عشوائي:</div>
-      <span id="anchorNum">٠</span><span id="anchorUnit"></span>
+    <div class="scene-wrap covered" id="sceneWrap">
+      <div class="timer" id="timer"></div>
+      <svg class="scene" id="scene" viewBox="0 0 400 400" role="img" aria-label="صورة للتخمين"></svg>
+      <div class="cover" id="cover">جاهز؟</div>
+      <div class="counter" id="counter">٠</div>
     </div>
 
-    <div class="phase" id="phaseA">
-      <p class="ask">الإجابة <b>أكتر</b> ولا <b>أقل</b> من الرقم ده؟</p>
+    <div class="anchor-box" id="anchorBox" hidden>
+      <div class="anchor-label">رقم عشوائي:</div>
+      <span id="anchorNum">٠</span>
+    </div>
+
+    <div class="phase" id="ph-ready">
+      <p class="ask">بص كويس. عندك <b>٣ ثواني</b> بس.</p>
+      <button class="stamp" id="watchBtn">ورّيني</button>
+    </div>
+
+    <div class="phase" id="ph-anchor" hidden>
+      <p class="ask">كان فيه <b>أكتر</b> ولا <b>أقل</b> من الرقم ده؟</p>
       <div class="pair">
         <button class="choice" id="more" disabled>أكتر</button>
         <button class="choice" id="less" disabled>أقل</button>
       </div>
     </div>
 
-    <div class="phase" id="phaseB" hidden>
-      <label class="ask" for="guess">تخمينك بالظبط:</label>
-      <div class="guess-row">
-        <input id="guess" class="field" type="text" inputmode="decimal" autocomplete="off" dir="ltr">
-        <span class="guess-unit" id="guessUnit"></span>
-      </div>
+    <div class="phase" id="ph-guess" hidden>
+      <label class="ask" for="guess">تخمينك: كان فيه كام بالظبط؟</label>
+      <input id="guess" class="field" type="text" inputmode="numeric" autocomplete="off" dir="ltr">
       <p class="msg" id="msg" aria-live="polite"></p>
       <button class="stamp" id="submit">تمام</button>
     </div>
+
+    <div class="phase" id="ph-result" hidden>
+      <p class="result" id="resultText" aria-live="polite"></p>
+      <button class="stamp" id="nextBtn" hidden>اللي بعدها</button>
+    </div>
   </section>
 
-  <!-- ===== Reveal ===== -->
+  <!-- ===== Final reveal ===== -->
   <section class="screen" id="reveal">
     <span class="tag">الكشف</span>
     <div class="circled">
@@ -285,18 +334,28 @@
       <p class="truth-line" id="truthLine"></p>
     </div>
 
+    <div class="confess later">
+      <div class="display">اعتراف صغير</div>
+      <p>الرقم كان عشوائي، بس متقسّم: في صورتين كان أكبر من الحقيقة بأكتر من الضعف، وفي صورتين كان أقل من نصها. التقسيمة دي هي اللي خلتنا نقيس هو شدّك قد إيه.</p>
+    </div>
+
     <!-- Only when the visitor came from a challenge link -->
     <div class="later" id="duel" hidden>
       <h3>إنت و<span id="friendName" style="color:var(--red)"></span></h3>
-      <p class="dim">انتوا الاتنين جاوبتوا نفس الأسئلة، بس كل واحد شاف رقم عشوائي عكس التاني.</p>
+      <p class="dim">شفتوا نفس الصور بالظبط، حبة بحبة. الفرق الوحيد إن كل واحد فيكم شاف رقم عشوائي عكس التاني.</p>
       <div id="duelRows"></div>
       <div class="duel-verdict" id="duelVerdict"></div>
     </div>
 
     <div class="later">
       <h3>ده اسمه: تحيّز المرساة <small>Anchoring Bias</small></h3>
-      <p>أول رقم بيدخل دماغك بيبقى زي مرساة المركب: بيتحرك حواليها بس مش بيبعد عنها كتير. لما بتخمّن، عقلك بيبدأ من الرقم ده ويتحرك خطوات صغيرة، ويقف بدري قبل ما يوصل للإجابة اللي كان هيقولها لوحده.</p>
+      <p>لما مش متأكد من رقم، عقلك بيمسك في أي رقم قريب ويبدأ منه، حتى لو عارف إنه ملوش علاقة. بيتحرك منه خطوات صغيرة ويقف بدري، فتخمينك بيفضل مشدود ناحيته زي مركب مربوطة في مرساة.</p>
       <p>أشهر تجربة فيه عملها تفيرسكي وكانمان: لفّوا عجلة حظ قدام الناس وقفت على ١٠ أو ٦٥، وبعدين سألوهم عن نسبة الدول الأفريقية في الأمم المتحدة. اللي العجلة وقفتلهم على ٦٥ خمّنوا أرقام أعلى بكتير.</p>
+    </div>
+
+    <div class="later">
+      <h3>وحاجة كمان عن عينك</h3>
+      <p id="underLine"></p>
     </div>
 
     <div class="later">
@@ -319,12 +378,12 @@
 
     <div class="verified later">
       <div class="display">اتأكدت؟ أيوه، بس فيه تفصيلة</div>
-      <p>المرساة من أقوى النتايج في علم النفس، واتكررت في مشاريع إعادة كبيرة زي Many Labs. التفصيلة: لما الرقم بيبقى جوه السؤال نفسه زي هنا، التأثير قوي وثابت. لكن لما بيبقى رقم ملوش علاقة خالص، زي آخر رقمين في تليفونك، التأثير أضعف ومش دايماً بيظهر.</p>
+      <p>المرساة من أقوى النتايج في علم النفس، واتكررت في مشاريع إعادة كبيرة زي Many Labs. التفصيلة: تأثيرها بيكبر كل ما تبقى مش متأكد، وبيصغر لما يبقى عندك مرجع قوي. عشان كده الصورة بتختفي بعد ٣ ثواني: كفاية تاخد إحساس، ومش كفاية تعد.</p>
     </div>
 
     <div class="share later">
       <h3>تحدّى صاحبك</h3>
-      <p class="dim">صاحبك هيشوف نفس الأسئلة بأرقام <b>عكس</b> أرقامك بالظبط. في الآخر هتشوفوا التحيّز بعينكم في إجاباتكم انتوا الاتنين.</p>
+      <p class="dim">صاحبك هيشوف <b>نفس الصور بالظبط</b>، بس بأرقام عشوائية عكس أرقامك. في الآخر هتشوفوا التحيّز بعينكم في تخميناتكم انتوا الاتنين.</p>
       <label for="name" class="num-label">اسمك (اختياري، هيظهر لصاحبك)</label>
       <input id="name" class="name-field" maxlength="20" autocomplete="nickname">
       <div class="share-row">
@@ -335,24 +394,18 @@
     </div>
 
     <p class="notebook later" id="notebook"></p>
-    <a class="next" href="../">جرّب كمان: اللون اللي مش لونه ←</a>
+    <div class="end-row">
+      <button class="ghost" id="again">صور جديدة</button>
+      <a class="next" href="../">جرّب كمان: اللون اللي مش لونه ←</a>
+    </div>
     <footer><a class="brand" href="../">basel.gg</a><span>تجربة ٢ من ٣</span></footer>
   </section>
 
 </main>
 
 <script>
-  // ---------- Questions: true values are stable, well-known facts ----------
-  // lo / hi anchors are roughly 0.35x and 2.6x the truth
-  const QUESTIONS = [
-    { short: 'برج القاهرة',   q: 'برج القاهرة طوله كام متر؟',               unit: 'متر',          truth: 187,  lo: 70,   hi: 480 },
-    { short: 'مفاتيح البيانو', q: 'البيانو العادي فيه كام مفتاح؟',            unit: 'مفتاح',        truth: 88,   lo: 30,   hi: 240 },
-    { short: 'سطح الشمس',     q: 'حرارة سطح الشمس كام درجة؟',               unit: 'درجة مئوية',   truth: 5500, lo: 1800, hi: 15000, approx: true },
-    { short: 'قناة السويس',   q: 'قناة السويس طولها كام كيلو؟',              unit: 'كيلومتر',      truth: 193,  lo: 60,   hi: 520 },
-    { short: 'سرعة الفهد',    q: 'أقصى سرعة للفهد كام كيلو في الساعة؟',      unit: 'كم/ساعة',      truth: 110,  lo: 40,   hi: 290, approx: true },
-    { short: 'جبل كاترين',    q: 'جبل سانت كاترين ارتفاعه كام متر؟',         unit: 'متر',          truth: 2629, lo: 900,  hi: 7000, approx: true }
-  ];
-  const ALL = (1 << QUESTIONS.length) - 1;
+  // ---------- Config ----------
+  const EXPOSE_MS = 3000;
   const STORAGE_KEY = 'lab.notebook';
   const NAME_KEY = 'lab.name';
   const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -360,13 +413,198 @@
   // ---------- Helpers ----------
   const $ = s => document.querySelector(s);
   const ar = n => Number(n).toLocaleString('ar-EG');
-  const isHigh = (mask, i) => (mask >> i) & 1;
-  const anchorOf = (mask, i) => isHigh(mask, i) ? QUESTIONS[i].hi : QUESTIONS[i].lo;
+  const mean = a => a.reduce((x, y) => x + y, 0) / a.length;
 
-  function show(id) {
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('on'));
-    $(id).classList.add('on');
-    window.scrollTo(0, 0);
+  // Small seeded RNG: the same seed always draws the same scenes
+  function mulberry32(a) {
+    return function () {
+      a |= 0; a = a + 0x6D2B79F5 | 0;
+      let t = Math.imul(a ^ a >>> 15, 1 | a);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+  function randomSeed() {
+    try { return crypto.getRandomValues(new Uint32Array(1))[0]; }
+    catch (e) { return Math.floor(Math.random() * 4294967296); }
+  }
+
+  // Scatter n points inside a shape with a minimum gap, shrinking the gap if it gets too crowded
+  function scatter(rng, n, inside, box, minD) {
+    const pts = [];
+    let d = minD;
+    while (pts.length < n && d > 2) {
+      const cs = d;
+      const grid = new Map();
+      const key = (gx, gy) => gx * 100000 + gy;
+      const add = p => {
+        const k = key(Math.floor((p.x - box.x) / cs), Math.floor((p.y - box.y) / cs));
+        if (!grid.has(k)) grid.set(k, []);
+        grid.get(k).push(p);
+      };
+      pts.forEach(add);
+      let tries = 0;
+      const maxTries = (n - pts.length) * 90;
+      while (pts.length < n && tries < maxTries) {
+        tries++;
+        const p = { x: box.x + rng() * box.w, y: box.y + rng() * box.h };
+        if (!inside(p.x, p.y)) continue;
+        const gx = Math.floor((p.x - box.x) / cs), gy = Math.floor((p.y - box.y) / cs);
+        let ok = true;
+        for (let i = -1; i <= 1 && ok; i++) {
+          for (let j = -1; j <= 1 && ok; j++) {
+            const cell = grid.get(key(gx + i, gy + j));
+            if (!cell) continue;
+            for (const q of cell) {
+              if ((q.x - p.x) ** 2 + (q.y - p.y) ** 2 < d * d) { ok = false; break; }
+            }
+          }
+        }
+        if (ok) { pts.push(p); add(p); }
+      }
+      d *= 0.9;
+    }
+    return pts;
+  }
+
+  const pick = (rng, arr) => arr[Math.floor(rng() * arr.length)];
+  const f1 = n => n.toFixed(1);
+
+  // ---------- Scenes ----------
+  // Each builder returns background markup, items (drawn around 0,0) and optional foreground
+  function buildSeeds(rng, n) {
+    const cx = 200, cy = 200, R = 156;
+    const inside = (x, y) => (x - cx) ** 2 + (y - cy) ** 2 < R * R;
+    const d = Math.sqrt(Math.PI * R * R / n) * 0.86;
+    const pts = scatter(rng, n, inside, { x: cx - R, y: cy - R, w: 2 * R, h: 2 * R }, d);
+    const items = pts.map(p => ({
+      x: p.x, y: p.y,
+      m: `<g transform="rotate(${Math.round(rng() * 360)})"><ellipse rx="6.6" ry="3.5" fill="#3a3129" stroke="#EAE2D0" stroke-width=".9"/><path d="M-4 -1.1H4M-4 1.1H4" stroke="#C9BFA9" stroke-width=".6"/></g>`
+    }));
+    const bg = `<circle cx="200" cy="200" r="186" fill="#1c1712" stroke="#EAE2D0" stroke-width="2"/>
+      <circle cx="200" cy="200" r="168" fill="none" stroke="#9A9183" stroke-width="1" stroke-dasharray="3 6" opacity=".6"/>`;
+    return { bg, items, fg: '' };
+  }
+
+  function buildMarbles(rng, n) {
+    const left = 101, right = 299, bottom = 362;
+    // Fill level grows with the count but never reaches the jar's shoulder (y 118)
+    const level = 150 + 90 * Math.min(1, Math.max(0, (n - 70) / 70));
+    const top = bottom - level;
+    const inside = (x, y) => {
+      if (x < left || x > right || y < top || y > bottom) return false;
+      // keep marbles out of the rounded bottom corners
+      if (y > 344 && x < 118) return (x - 118) ** 2 + (y - 344) ** 2 < 17 * 17;
+      if (y > 344 && x > 282) return (x - 282) ** 2 + (y - 344) ** 2 < 17 * 17;
+      return true;
+    };
+    const d = Math.max(13, Math.sqrt((right - left) * level / n) * 0.86);
+    const pts = scatter(rng, n, inside, { x: left, y: top, w: right - left, h: level }, d);
+    const colors = ['#FF4A1C', '#C8F031', '#4F86FF', '#FFD23F', '#EAE2D0'];
+    const items = pts.map(p => ({
+      x: p.x, y: p.y,
+      m: `<circle r="6" fill="${pick(rng, colors)}"/><circle cx="-2" cy="-2" r="1.7" fill="#fff" opacity=".55"/>`
+    }));
+    const body = 'M130 108H118Q92 108 92 134V344Q92 370 118 370H282Q308 370 308 344V134Q308 108 282 108H270';
+    const bg = `<path d="${body}Z" fill="rgba(234,226,208,.05)"/>`;
+    const fg = `<path d="${body}M130 108V80M270 108V80" fill="none" stroke="#EAE2D0" stroke-width="2.5" stroke-linejoin="round"/>
+      <rect x="120" y="56" width="160" height="26" rx="5" fill="#FF4A1C"/>
+      <path d="M106 142V330" stroke="#EAE2D0" stroke-width="5" stroke-linecap="round" opacity=".16"/>`;
+    return { bg, items, fg };
+  }
+
+  function buildMetro(rng, n) {
+    const box = { x: 34, y: 66, w: 332, h: 232 };
+    const inside = (x, y) => x > box.x && x < box.x + box.w && y > box.y && y < box.y + box.h;
+    const d = Math.sqrt(box.w * box.h / n) * 0.86;
+    const pts = scatter(rng, n, inside, box, d);
+    const items = pts.map(p => {
+      const r = rng();
+      const head = r < 0.12 ? '#FF4A1C' : r < 0.36 ? '#EAE2D0' : '#2a211b';
+      const rot = Math.round(-30 + rng() * 60);
+      return {
+        x: p.x, y: p.y,
+        // Seen from above: shoulders, then a head (hair or a headscarf)
+        m: `<g transform="rotate(${rot})"><ellipse rx="8.4" ry="4.8" fill="#8a7f71"/><circle r="4" fill="${head}"/></g>`
+      };
+    });
+    let sleepers = '';
+    for (let x = 26; x < 376; x += 18) sleepers += `<rect x="${x}" y="340" width="6" height="34" fill="#2a221c"/>`;
+    const bg = `<text x="200" y="34" text-anchor="middle" font-family="Lalezar, sans-serif" font-size="20" fill="#9A9183">محطة السادات</text>
+      <rect x="20" y="48" width="360" height="270" fill="#1c1712" stroke="#9A9183" stroke-width="1.5"/>
+      <line x1="24" y1="310" x2="376" y2="310" stroke="#FFD23F" stroke-width="4" stroke-dasharray="10 6"/>
+      ${sleepers}
+      <line x1="20" y1="346" x2="380" y2="346" stroke="#9A9183" stroke-width="2.5"/>
+      <line x1="20" y1="368" x2="380" y2="368" stroke="#9A9183" stroke-width="2.5"/>`;
+    return { bg, items, fg: '' };
+  }
+
+  function buildStars(rng, n) {
+    const duneY = x => 300 + 16 * Math.sin(x / 52 + 1);
+    const inside = (x, y) => x > 10 && x < 390 && y > 12 && y < duneY(x) - 12;
+    const d = Math.sqrt(380 * 280 / n) * 0.86;
+    const pts = scatter(rng, n, inside, { x: 10, y: 12, w: 380, h: 300 }, d);
+    const items = pts.map(p => {
+      const s = rng();
+      const r = 1.9 + s * s * 2.4;
+      const op = (0.55 + rng() * 0.45).toFixed(2);
+      if (r > 3.6) {
+        const k = r * 2, q = k * 0.25;
+        return { x: p.x, y: p.y, m: `<path d="M0 -${f1(k)}L${f1(q)} -${f1(q)}L${f1(k)} 0L${f1(q)} ${f1(q)}L0 ${f1(k)}L-${f1(q)} ${f1(q)}L-${f1(k)} 0L-${f1(q)} -${f1(q)}Z" fill="#EAE2D0" opacity="${op}"/>` };
+      }
+      return { x: p.x, y: p.y, m: `<circle r="${f1(r)}" fill="#EAE2D0" opacity="${op}"/>` };
+    });
+    let dune = 'M0 ' + f1(duneY(0));
+    for (let x = 20; x <= 400; x += 20) dune += ` L${x} ${f1(duneY(x))}`;
+    dune += ' L400 400 L0 400 Z';
+    let back = 'M0 ' + f1(duneY(0) - 14);
+    for (let x = 20; x <= 400; x += 20) back += ` L${x} ${f1(duneY(x) - 14 + 10 * Math.sin(x / 31))}`;
+    back += ' L400 400 L0 400 Z';
+    const bg = `<rect width="400" height="400" fill="#0e0b09"/>
+      <path d="${back}" fill="#1f1914"/>
+      <path d="${dune}" fill="#2a221c"/>`;
+    return { bg, items, fg: '' };
+  }
+
+  const SCENES = [
+    { title: 'طبق لب',             short: 'طبق اللب',  range: [140, 260], build: buildSeeds },
+    { title: 'برطمان بلي',         short: 'البلي',     range: [70, 140],  build: buildMarbles },
+    { title: 'رصيف محطة السادات',  short: 'المحطة',    range: [120, 240], build: buildMetro },
+    { title: 'سما الصحرا بالليل',  short: 'النجوم',    range: [180, 380], build: buildStars }
+  ];
+  const ROUNDS = SCENES.length;
+  const ALL = (1 << ROUNDS) - 1;
+  const isHigh = (mask, i) => (mask >> i) & 1;
+
+  // Everything for a round comes from (seed, round index), so a friend with the same seed sees the same scene
+  function makeRound(i, seed, mask) {
+    const sc = SCENES[i];
+    const rng = mulberry32((seed + Math.imul(i + 1, 0x9E3779B1)) >>> 0);
+    const [a, b] = sc.range;
+    const target = a + Math.floor(rng() * (b - a + 1));
+    const hiMul = 2.1 + rng() * 0.8;
+    const loMul = 0.33 + rng() * 0.15;
+    const drawn = sc.build(rng, target);
+    // Count-up goes in a sweep from the top-right, like reading Arabic
+    drawn.items.sort((p, q) => (p.y * 0.7 + (400 - p.x) * 0.3) - (q.y * 0.7 + (400 - q.x) * 0.3));
+    const truth = drawn.items.length;
+    const anchorHi = Math.round(truth * hiMul);
+    const anchorLo = Math.max(1, Math.round(truth * loMul));
+    const high = isHigh(mask, i);
+    return { scene: sc, truth, anchorHi, anchorLo, high, anchor: high ? anchorHi : anchorLo, drawn };
+  }
+
+  function renderScene(svg, drawn) {
+    const items = drawn.items
+      .map(it => `<g class="it" transform="translate(${f1(it.x)} ${f1(it.y)})">${it.m}</g>`)
+      .join('');
+    svg.innerHTML = drawn.bg + '<g>' + items + '</g>' + (drawn.fg || '');
+  }
+
+  // Exactly half the rounds get a high anchor
+  function randomMask() {
+    const idx = SCENES.map((_, i) => i).sort(() => Math.random() - 0.5);
+    return idx.slice(0, ROUNDS / 2).reduce((m, i) => m | (1 << i), 0);
   }
 
   // Accept Arabic-Indic digits, commas and spaces
@@ -377,16 +615,10 @@
       .replace(/٫/g, '.')
       .replace(/[,\s٬،]/g, '');
     const n = parseFloat(clean);
-    return isFinite(n) && n > 0 && n < 1e9 ? n : null;
+    return isFinite(n) && n > 0 && n < 1e6 ? n : null;
   }
 
-  // Exactly half the questions get a high anchor
-  function randomMask() {
-    const idx = QUESTIONS.map((_, i) => i).sort(() => Math.random() - 0.5);
-    return idx.slice(0, QUESTIONS.length / 2).reduce((m, i) => m | (1 << i), 0);
-  }
-
-  // ---------- Challenge links (result travels inside the URL) ----------
+  // ---------- Challenge links (the result travels inside the URL) ----------
   function encodeResult(obj) {
     const bytes = new TextEncoder().encode(JSON.stringify(obj));
     let bin = '';
@@ -399,10 +631,11 @@
       while (b.length % 4) b += '=';
       const bytes = Uint8Array.from(atob(b), c => c.charCodeAt(0));
       const o = JSON.parse(new TextDecoder().decode(bytes));
-      const okG = Array.isArray(o.g) && o.g.length === QUESTIONS.length && o.g.every(x => typeof x === 'number' && x > 0 && isFinite(x));
+      const okS = Number.isInteger(o.s) && o.s >= 0 && o.s <= 4294967295;
       const okH = Number.isInteger(o.h) && o.h >= 0 && o.h <= ALL;
-      if (!okG || !okH || typeof o.e !== 'number' || !isFinite(o.e)) return null;
-      return { n: String(o.n || '').slice(0, 20), e: Math.round(o.e), h: o.h, g: o.g };
+      const okG = Array.isArray(o.g) && o.g.length === ROUNDS && o.g.every(x => typeof x === 'number' && x > 0 && isFinite(x));
+      if (!okS || !okH || !okG || typeof o.e !== 'number' || !isFinite(o.e)) return null;
+      return { n: String(o.n || '').slice(0, 20), e: Math.round(o.e), s: o.s, h: o.h, g: o.g };
     } catch (e) {
       return null;
     }
@@ -412,20 +645,80 @@
     return c ? decodeResult(c) : null;
   })();
   const friendName = () => (challenger && challenger.n) ? challenger.n : 'صاحبك';
+  const baseUrl = () => location.href.split(/[?#]/)[0];
 
   // ---------- State ----------
-  // A friend from a challenge gets the exact opposite anchors: a real two-group experiment
-  let mask = challenger ? (ALL ^ challenger.h) : randomMask();
-  let qi = 0, guesses = [], lastResult = null;
+  // A friend from a challenge gets the same seed and the exact opposite anchors
+  const seed = challenger ? challenger.s : randomSeed();
+  const mask = challenger ? (ALL ^ challenger.h) : randomMask();
+  let rounds = [], ri = 0, guesses = [], lastResult = null;
+
+  function show(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('on'));
+    $(id).classList.add('on');
+    window.scrollTo(0, 0);
+  }
+
+  function setPhase(p) {
+    ['ready', 'anchor', 'guess', 'result'].forEach(id => { $('#ph-' + id).hidden = id !== p; });
+    const numberPhase = p === 'anchor' || p === 'guess';
+    $('#sceneWrap').hidden = numberPhase;
+    $('#anchorBox').hidden = !numberPhase;
+  }
 
   function renderDots() {
     const d = $('#dots');
     d.innerHTML = '';
-    QUESTIONS.forEach((_, i) => {
+    for (let i = 0; i < ROUNDS; i++) {
       const s = document.createElement('span');
-      if (i < qi) s.className = 'done';
+      if (i < ri) s.className = 'done';
       d.appendChild(s);
-    });
+    }
+  }
+
+  function startGame() {
+    rounds = SCENES.map((_, i) => makeRound(i, seed, mask));
+    ri = 0;
+    guesses = [];
+    show('#game');
+    readyRound();
+  }
+
+  function readyRound() {
+    const r = rounds[ri];
+    renderDots();
+    $('#rLabel').textContent = `صورة ${ar(ri + 1)} من ${ar(ROUNDS)}`;
+    $('#rTitle').textContent = r.scene.title;
+    const svg = $('#scene');
+    renderScene(svg, r.drawn);
+    svg.classList.remove('counting');
+    const wrap = $('#sceneWrap');
+    wrap.classList.add('covered');
+    wrap.classList.remove('counting-on');
+    $('#cover').textContent = 'جاهز؟';
+    const counter = $('#counter');
+    counter.classList.remove('done');
+    counter.textContent = ar(0);
+    const t = $('#timer');
+    t.classList.remove('run');
+    t.style.width = '100%';
+    setPhase('ready');
+    window.scrollTo(0, 0);
+  }
+
+  function watch() {
+    setPhase('watch');
+    const wrap = $('#sceneWrap');
+    wrap.classList.remove('covered');
+    const t = $('#timer');
+    void t.offsetWidth;
+    t.classList.add('run');
+    t.style.width = '0%';
+    setTimeout(() => {
+      wrap.classList.add('covered');
+      $('#cover').textContent = '؟';
+      setTimeout(anchorPhase, 600);
+    }, EXPOSE_MS);
   }
 
   // Slot-machine roll that lands on the anchor
@@ -453,27 +746,19 @@
     });
   }
 
-  async function showQuestion() {
-    const q = QUESTIONS[qi];
-    renderDots();
-    $('#qLabel').textContent = `سؤال ${ar(qi + 1)} من ${ar(QUESTIONS.length)}`;
-    $('#qText').textContent = q.q;
-    $('#anchorUnit').textContent = q.unit;
-    $('#guessUnit').textContent = q.unit;
-    $('#phaseA').hidden = false;
-    $('#phaseB').hidden = true;
+  async function anchorPhase() {
+    setPhase('anchor');
     $('#more').disabled = true;
     $('#less').disabled = true;
-    $('#guess').value = '';
-    $('#msg').textContent = '';
-    await roll($('#anchorNum'), anchorOf(mask, qi));
+    await roll($('#anchorNum'), rounds[ri].anchor);
     $('#more').disabled = false;
     $('#less').disabled = false;
   }
 
-  function toGuessPhase() {
-    $('#phaseA').hidden = true;
-    $('#phaseB').hidden = false;
+  function guessPhase() {
+    setPhase('guess');
+    $('#guess').value = '';
+    $('#msg').textContent = '';
     $('#guess').focus();
   }
 
@@ -486,19 +771,74 @@
       return;
     }
     field.classList.remove('bad');
-    guesses.push(n);
-    qi++;
-    if (qi < QUESTIONS.length) showQuestion();
+    field.blur();
+    guesses.push(Math.round(n));
+    resultPhase();
+  }
+
+  // Bring the picture back and count every item, one by one
+  function countReveal(svg) {
+    const items = svg.querySelectorAll('.it');
+    const counter = $('#counter');
+    if (reduceMotion) {
+      items.forEach(el => el.classList.add('c'));
+      counter.textContent = ar(items.length);
+      counter.classList.add('done');
+      return Promise.resolve();
+    }
+    return new Promise(res => {
+      const dur = 2000, start = performance.now();
+      let lit = 0;
+      const step = now => {
+        const p = Math.min(1, (now - start) / dur);
+        const e = 1 - (1 - p) * (1 - p);
+        const k = Math.round(e * items.length);
+        while (lit < k) items[lit++].classList.add('c');
+        counter.textContent = ar(lit);
+        if (p < 1) requestAnimationFrame(step);
+        else { counter.classList.add('done'); res(); }
+      };
+      requestAnimationFrame(step);
+    });
+  }
+
+  async function resultPhase() {
+    const r = rounds[ri], g = guesses[ri];
+    setPhase('result');
+    $('#resultText').textContent = '';
+    $('#nextBtn').hidden = true;
+    const svg = $('#scene'), wrap = $('#sceneWrap');
+    svg.classList.add('counting');
+    wrap.classList.add('counting-on');
+    wrap.classList.remove('covered');
+    window.scrollTo(0, 0);
+    await countReveal(svg);
+
+    const pct = Math.round((g / r.truth - 1) * 100);
+    const diff = Math.abs(pct) <= 5 ? 'مظبوطة تقريباً!'
+      : pct < 0 ? `أقل بـ ${ar(-pct)}٪` : `أكتر بـ ${ar(pct)}٪`;
+    $('#resultText').innerHTML =
+      `تخمينك <span class="g">${ar(g)}</span> · الحقيقة <span class="t">${ar(r.truth)}</span> <span class="d">(${diff})</span>`;
+    const last = ri === ROUNDS - 1;
+    $('#nextBtn').textContent = last ? 'النتيجة' : 'اللي بعدها';
+    $('#nextBtn').hidden = false;
+  }
+
+  function nextRound() {
+    ri++;
+    if (ri < ROUNDS) readyRound();
     else showReveal();
   }
 
   // ---------- Scoring ----------
   // Compare guesses after high anchors vs low anchors, as ratios to the truth (log scale)
-  function anchorEffect(gs, m) {
+  function anchorEffect() {
     const hi = [], lo = [];
-    gs.forEach((g, i) => (isHigh(m, i) ? hi : lo).push(Math.log(g / QUESTIONS[i].truth)));
-    const mean = a => a.reduce((x, y) => x + y, 0) / a.length;
+    rounds.forEach((r, i) => (r.high ? hi : lo).push(Math.log(guesses[i] / r.truth)));
     return Math.round((Math.exp(mean(hi) - mean(lo)) - 1) * 100);
+  }
+  function overallBias() {
+    return Math.round((Math.exp(mean(rounds.map((r, i) => Math.log(guesses[i] / r.truth)))) - 1) * 100);
   }
 
   function countUp(el, target, suffix) {
@@ -513,14 +853,14 @@
     requestAnimationFrame(step);
   }
 
-  // ---------- Strips: anchor, guess and truth on a log number line ----------
+  // Anchor, guess and truth on a log number line
   function buildStrips() {
     const box = $('#strips');
     box.innerHTML = '';
-    QUESTIONS.forEach((q, i) => {
-      const a = anchorOf(mask, i), g = guesses[i], t = q.truth;
+    rounds.forEach((r, i) => {
+      const a = r.anchor, g = guesses[i], t = r.truth;
       const lo = Math.min(a, g, t) / 1.5, hi = Math.max(a, g, t) * 1.5;
-      const pos = v => ((Math.log(v) - Math.log(lo)) / (Math.log(hi) - Math.log(lo)) * 100);
+      const pos = v => (Math.log(v) - Math.log(lo)) / (Math.log(hi) - Math.log(lo)) * 100;
       const towardAnchor = Math.sign(g - t) === Math.sign(a - t);
 
       const strip = document.createElement('div');
@@ -533,23 +873,19 @@
           <div class="mk truth"></div>
           <div class="mk guess"></div>
         </div>
-        <div class="strip-nums">
-          <b class="a"></b> · <b class="g"></b> · <b class="t"></b>
-        </div>`;
-      strip.querySelector('.strip-label').textContent = q.short;
+        <div class="strip-nums"><b class="a"></b> · <b class="g"></b> · <b class="t"></b></div>`;
+      strip.querySelector('.strip-label').textContent = r.scene.short;
       strip.querySelector('.a').textContent = `الرقم ${ar(a)}`;
-      strip.querySelector('.g').textContent = `تخمينك ${ar(Math.round(g))}`;
-      strip.querySelector('.t').textContent = `الحقيقة ${q.approx ? 'حوالي ' : ''}${ar(t)}`;
+      strip.querySelector('.g').textContent = `تخمينك ${ar(g)}`;
+      strip.querySelector('.t').textContent = `الحقيقة ${ar(t)}`;
 
       const pa = pos(a), pg = pos(g), pt = pos(t);
       strip.querySelector('.anchor').style.left = pa + '%';
       strip.querySelector('.truth').style.left = pt + '%';
-      const guessEl = strip.querySelector('.guess');
-      const seg = strip.querySelector('.seg');
-      // Start at the truth, then slide out to the guess when visible
-      guessEl.style.left = pt + '%';
-      seg.style.left = pt + '%';
-      strip.dataset.to = JSON.stringify({ pg, pt, delay: i * 120 });
+      // The guess starts on the truth, then gets pulled out to where you put it
+      strip.querySelector('.guess').style.left = pt + '%';
+      strip.querySelector('.seg').style.left = pt + '%';
+      strip.dataset.to = JSON.stringify({ pg, pt, delay: i * 140 });
       box.appendChild(strip);
     });
   }
@@ -566,7 +902,7 @@
     });
   }
 
-  // ---------- Duel with the friend who sent the link ----------
+  // Same scenes, opposite anchors: did the higher anchor give the higher guess?
   function buildDuel() {
     const duel = $('#duel');
     if (!challenger) { duel.hidden = true; return; }
@@ -575,8 +911,9 @@
     const rows = $('#duelRows');
     rows.innerHTML = '';
     let consistent = 0;
-    QUESTIONS.forEach((q, i) => {
-      const myA = anchorOf(mask, i), frA = anchorOf(challenger.h, i);
+    rounds.forEach((r, i) => {
+      const myA = r.anchor;
+      const frA = isHigh(challenger.h, i) ? r.anchorHi : r.anchorLo;
       const myG = guesses[i], frG = challenger.g[i];
       const ok = myA > frA ? myG > frG : frG > myG;
       if (ok) consistent++;
@@ -584,22 +921,25 @@
       row.className = 'duel-q';
       row.innerHTML = `<div class="strip-label"></div>
         <div class="who"><span class="l1"></span><span class="v1"></span></div>
-        <div class="who"><span class="l2"></span><span class="v2"></span></div>`;
-      row.querySelector('.strip-label').textContent = q.short + (ok ? '  ✓' : '');
-      if (ok) row.querySelector('.strip-label').classList.add('ok');
+        <div class="who"><span class="l2"></span><span class="v2"></span></div>
+        <div class="strip-nums"><b class="t"></b></div>`;
+      const label = row.querySelector('.strip-label');
+      label.textContent = r.scene.short + (ok ? '  ✓' : '');
+      if (ok) label.classList.add('ok');
       row.querySelector('.l1').textContent = 'إنت';
-      row.querySelector('.v1').textContent = `الرقم ${ar(myA)} ← التخمين ${ar(Math.round(myG))}`;
+      row.querySelector('.v1').textContent = `الرقم ${ar(myA)} ← التخمين ${ar(myG)}`;
       row.querySelector('.l2').textContent = friendName();
       row.querySelector('.v2').textContent = `الرقم ${ar(frA)} ← التخمين ${ar(Math.round(frG))}`;
+      row.querySelector('.t').textContent = `الحقيقة ${ar(r.truth)}`;
       rows.appendChild(row);
     });
-    const n = QUESTIONS.length;
-    $('#duelVerdict').textContent = consistent >= 4
-      ? `في ${ar(consistent)} من ${ar(n)} أسئلة، اللي شاف الرقم الأكبر خمّن أكبر. المرساة اشتغلت عليكم انتوا الاتنين.`
-      : `في ${ar(consistent)} بس من ${ar(n)} أسئلة، اللي شاف الرقم الأكبر خمّن أكبر. عقولكم قاومت المرة دي أكتر من المعتاد.`;
+    $('#duelVerdict').textContent = consistent >= 3
+      ? `في ${ar(consistent)} من ${ar(ROUNDS)} صور، اللي شاف الرقم الأكبر خمّن أكبر. نفس الصورة، ونفس العين، والرقم هو اللي فرّق.`
+      : consistent === 0
+        ? 'ولا صورة واحدة اللي شاف فيها الرقم الأكبر خمّن أكبر. حد فيكم كان بيقاوم الرقم عن قصد؟'
+        : `في ${ar(consistent)} بس من ${ar(ROUNDS)} صور، اللي شاف الرقم الأكبر خمّن أكبر. عيونكم قاومت المرة دي أكتر من المعتاد.`;
   }
 
-  // ---------- Reveal ----------
   function readNotebook() {
     try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch (e) { return {}; }
   }
@@ -608,7 +948,8 @@
   }
 
   function showReveal() {
-    const effect = anchorEffect(guesses, mask);
+    const effect = anchorEffect();
+    const bias = overallBias();
     lastResult = { effect };
 
     const section = $('#reveal');
@@ -619,28 +960,34 @@
 
     countUp($('#stat'), Math.abs(effect), '٪');
     if (effect >= 10) {
-      $('#verdict').innerHTML = 'الرقم العشوائي <em>شدّك</em>.';
-      $('#verdictSub').textContent = `لما الرقم كان كبير، تخميناتك طلعت أعلى بـ ${ar(effect)}٪ في المتوسط من لما كان صغير.`;
-      $('#truthLine').innerHTML = 'إنت كنت عارف إنه عشوائي. <span class="hl">وبرضه شدّك.</span>';
+      $('#verdict').innerHTML = 'الرقم العشوائي <em>غيّر</em> اللي شافته عينك.';
+      $('#verdictSub').textContent = `في الصور اللي جه فيها رقم كبير، تخميناتك كانت أعلى بـ ${ar(effect)}٪ من الصور اللي جه فيها رقم صغير.`;
+      $('#truthLine').innerHTML = 'عينك شافت الصورة بنفسها، وإنت عارف إن الرقم عشوائي. <span class="hl">وبرضه شدّك.</span>';
     } else if (effect > -10) {
-      $('#verdict').innerHTML = 'عقلك <em>قاوم</em> المرساة.';
+      $('#verdict').innerHTML = 'عينك <em>قاومت</em> المرساة.';
       $('#verdictSub').textContent = 'تخميناتك بعد الأرقام الكبيرة والصغيرة كانت قريبة من بعض. ده مش سهل، وأغلب الناس مش بيقدروا.';
-      $('#truthLine').innerHTML = 'المرة دي صح. <span class="hl">بس جرّب تتحدى صاحبك وشوف هو هيقاوم ولا لأ.</span>';
+      $('#truthLine').innerHTML = 'المرة دي صح. <span class="hl">ابعت التحدي وشوف صاحبك هيقاوم ولا لأ.</span>';
     } else {
       $('#verdict').innerHTML = 'عقلك عمل <em>العكس</em>.';
       $('#verdictSub').textContent = 'تخميناتك بعد الأرقام الكبيرة طلعت أقل. ده نادر، وغالباً معناه إنك كنت بتقاوم الرقم عن قصد.';
       $('#truthLine').innerHTML = 'الرقم أثّر فيك فعلاً، <span class="hl">بس في الاتجاه التاني.</span>';
     }
 
+    $('#underLine').textContent = bias <= -15
+      ? `في المتوسط خمّنت أقل من الحقيقة بـ ${ar(-bias)}٪. ده شائع جداً: لما العين بتشوف كمية كبيرة بسرعة، العقل غالباً بيقلّلها.`
+      : bias >= 15
+        ? `في المتوسط خمّنت أكتر من الحقيقة بـ ${ar(bias)}٪. ده أقل شيوعاً، لأن أغلب الناس بيقلّلوا الكميات الكبيرة مش بيزوّدوها.`
+        : 'في المتوسط، تقديرك كان قريب من الحقيقة بفرق أقل من ١٥٪. عينك حلوة.';
+
     buildStrips();
     buildDuel();
 
     const nb = readNotebook();
     const prev = nb.anchor;
-    nb.anchor = { effect, at: new Date().toISOString() };
+    nb.anchor = { effect, bias, at: new Date().toISOString() };
     const saved = saveNotebook(nb);
     let note = saved ? 'اتسجّلت نتيجتك في «كراسة إجاباتك» على جهازك بس، محدش غيرك يقدر يشوفها.' : '';
-    if (prev && typeof prev.effect === 'number') note += ` المرة اللي فاتت كانت ${ar(prev.effect)}٪.`;
+    if (prev && typeof prev.effect === 'number') note += ` المرة اللي فاتت الشدّ كان ${ar(prev.effect)}٪.`;
     $('#notebook').textContent = note;
     $('#toast').textContent = '';
 
@@ -668,13 +1015,12 @@
   function challengeUrl() {
     const name = $('#name').value.trim().slice(0, 20);
     try { localStorage.setItem(NAME_KEY, name); } catch (e) {}
-    const g = guesses.map(x => Math.round(x * 10) / 10);
-    return location.href.split(/[?#]/)[0] + '?c=' + encodeResult({ n: name, e: lastResult.effect, h: mask, g });
+    return baseUrl() + '?c=' + encodeResult({ n: name, e: lastResult.effect, s: seed, h: mask, g: guesses });
   }
   function challengeText() {
     return lastResult.effect >= 10
-      ? `رقم عشوائي شدّ تخميناتي ${ar(lastResult.effect)}٪ في تجربة «التمن الأولاني». تعالى نشوف هيشدّك قد إيه.`
-      : 'قاومت الرقم العشوائي في تجربة «التمن الأولاني». تقدر تعمل زيي؟';
+      ? `رقم عشوائي شدّ تخميناتي ${ar(lastResult.effect)}٪ في تجربة «الرقم الأولاني». هتشوف نفس الصور بالظبط، تعالى نشوف هيشدّك قد إيه.`
+      : 'قاومت الرقم العشوائي في تجربة «الرقم الأولاني». هتشوف نفس الصور بالظبط، تقدر تعمل زيي؟';
   }
   async function shareChallenge() {
     if (!lastResult) return;
@@ -703,21 +1049,31 @@
     box.textContent = 'تحدّي من ';
     box.appendChild(who);
     box.append(challenger.e >= 10
-      ? `: الرقم العشوائي شدّ التخمين ${ar(challenger.e)}٪. هتشوف نفس الأسئلة، بس بأرقام عكس اللي في التحدي بالظبط.`
-      : ': قاوم الرقم العشوائي. هتشوف نفس الأسئلة، بس بأرقام عكس اللي في التحدي بالظبط.');
+      ? `: الرقم العشوائي شدّ التخمين ${ar(challenger.e)}٪. هتشوف نفس الصور بالظبط، بس بأرقام عشوائية عكس اللي في التحدي.`
+      : ': قاوم الرقم العشوائي. هتشوف نفس الصور بالظبط، بس بأرقام عشوائية عكس اللي في التحدي.');
     box.hidden = false;
+  }
+
+  // ---------- Intro teaser: a small blinking plate ----------
+  function drawTeaser() {
+    const drawn = buildSeeds(mulberry32(7), 90);
+    renderScene($('#teaser'), drawn);
   }
 
   // ---------- Wire up ----------
   try { $('#name').value = localStorage.getItem(NAME_KEY) || ''; } catch (e) {}
+  drawTeaser();
   showChallengeBanner();
-  $('#go').addEventListener('click', () => { qi = 0; guesses = []; show('#quiz'); showQuestion(); });
-  $('#more').addEventListener('click', toGuessPhase);
-  $('#less').addEventListener('click', toGuessPhase);
+  $('#go').addEventListener('click', startGame);
+  $('#watchBtn').addEventListener('click', watch);
+  $('#more').addEventListener('click', guessPhase);
+  $('#less').addEventListener('click', guessPhase);
   $('#submit').addEventListener('click', submitGuess);
   $('#guess').addEventListener('keydown', e => { if (e.key === 'Enter') submitGuess(); });
+  $('#nextBtn').addEventListener('click', nextRound);
   $('#share').addEventListener('click', shareChallenge);
   $('#wa').addEventListener('click', shareWhatsApp);
+  $('#again').addEventListener('click', () => { location.href = baseUrl(); });
 </script>
 </body>
 </html>
